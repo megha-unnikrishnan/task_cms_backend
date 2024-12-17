@@ -1,0 +1,73 @@
+{% extends 'admin/admin_dashboard.html' %}
+
+{% block content %}
+<!-- User Edit Section -->
+<div class="mt-8 bg-white p-4 rounded shadow-md">
+    <h2 class="text-xl font-bold mb-4">Edit User: {{ user.full_name }}</h2>
+    
+    {% if errors %}
+        <p class="text-red-500 mb-4">Please fix the errors below.</p>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+        {% csrf_token %}
+        
+        <div class="mb-4">
+            <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+            <input type="text" id="full_name" name="full_name" value="{{ user.full_name }}" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+        </div>
+
+        <div class="mb-4">
+            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+        </div>
+
+        <div class="mb-4">
+            <label for="phone" class="block text-sm font-medium text-gray-700">Mobile Number</label>
+            <input type="text" id="phone" name="phone" value="{{ user.phone }}" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+        </div>
+
+        <div class="mb-4">
+            <label for="profile_picture" class="block text-sm font-medium text-gray-700">Profile Picture</label>
+            {% if user.profile_picture %}
+                <div class="mb-2">
+                    <img src="{{ user.profile_picture }}" alt="Current Profile Picture" class="w-32 h-32 object-cover rounded-full">
+                </div>
+            {% endif %}
+            <input type="file" id="profile_picture" name="profile_picture" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+        </div>
+
+        <div class="flex justify-between">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Save Changes</button>
+            <a href="" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function validateForm() {
+        // Get the values of the input fields
+        var fullName = document.getElementById("full_name").value;
+        var email = document.getElementById("email").value;
+        var phone = document.getElementById("phone").value;
+
+        // Check if any of the fields are empty
+        if (fullName === "") {
+            alert("Full Name is required!");
+            return false;  // Prevent form submission
+        }
+
+        if (email === "") {
+            alert("Email is required!");
+            return false;  // Prevent form submission
+        }
+
+        if (phone === "") {
+            alert("Mobile Number is required!");
+            return false;  // Prevent form submission
+        }
+
+        return true;  // Allow form submission
+    }
+</script>
+{% endblock %}

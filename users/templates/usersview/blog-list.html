@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navbar -->
+    <nav class="bg-blue-600 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-white text-2xl font-bold">My Blog</a>
+            <div>
+                <a href="/" class="text-white mx-4">Home</a>
+                <a href="/login" class="text-white mx-4">Login</a>
+                <a href="/register" class="text-white mx-4">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Blog Post Detail -->
+    <div class="container mx-auto p-6">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <img src="https://via.placeholder.com/800x400" alt="Post Image" class="w-full h-64 object-cover rounded-lg mb-6">
+            <h1 class="text-3xl font-bold mb-4">Blog Post Title</h1>
+            <p class="text-gray-600 mb-6">Posted on <span class="font-semibold">December 13, 2024</span> by Author Name</p>
+            <div class="text-gray-800">
+                <p class="mb-4">This is the content of the blog post. It could be a long article, so you can add multiple paragraphs, images, or even embedded media here.</p>
+                <p class="mb-4">You can also include links to other posts, relevant external resources, or anything else that enhances the post's value.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold mb-4">Comments</h2>
+        <div class="bg-white p-4 rounded-lg shadow-lg mb-6">
+            <div class="flex items-center mb-4">
+                <img src="https://via.placeholder.com/40" alt="User Avatar" class="w-10 h-10 rounded-full mr-4">
+                <p class="font-semibold">User Name</p>
+            </div>
+            <p class="text-gray-600">This is a comment on the blog post. Users can leave their thoughts and feedback here.</p>
+        </div>
+        <!-- Repeat above block for other comments -->
+        <div class="bg-white p-4 rounded-lg shadow-lg">
+            <textarea placeholder="Add a comment..." class="w-full p-4 border border-gray-300 rounded-lg mb-4" rows="4"></textarea>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg">Post Comment</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white text-center p-4 mt-8">
+        <p>&copy; 2024 My Blog. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

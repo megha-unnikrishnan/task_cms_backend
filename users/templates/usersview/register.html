@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h1 class="text-2xl font-bold text-center mb-6">Register</h1>
+
+        {% if success_message %}
+            <div class="bg-green-100 text-green-600 p-4 rounded mb-4">
+                {{ success_message }}
+            </div>
+        {% endif %}
+        
+        {% if errors %}
+            <ul class="bg-red-100 text-red-600 p-4 rounded mb-4">
+                {% for field, error_list in errors.items %}
+                    <li>{{ field }}: {{ error_list|join:", " }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+        <form id="registerForm" method="POST" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label for="full_name" class="block text-gray-700 font-medium">Full Name:</label>
+                <input type="text" name="full_name" id="full_name" class="w-full border border-gray-300 rounded p-2" value="{{ form_data.full_name|default:'' }}">
+                <p id="full_name_error" class="error-message"></p>
+            </div>
+            
+            <div class="mb-4">
+                <label for="email" class="block text-gray-700 font-medium">Email:</label>
+                <input type="email" name="email" id="email" class="w-full border border-gray-300 rounded p-2" value="{{ form_data.email|default:'' }}">
+                <p id="email_error" class="error-message"></p>
+            </div>
+            
+            <div class="mb-4">
+                <label for="password" class="block text-gray-700 font-medium">Password:</label>
+                <input type="password" name="password" id="password" class="w-full border border-gray-300 rounded p-2">
+                <p id="password_error" class="error-message"></p>
+            </div>
+            
+            <div class="mb-4">
+                <label for="confirm_password" class="block text-gray-700 font-medium">Confirm Password:</label>
+                <input type="password" id="confirm_password" class="w-full border border-gray-300 rounded p-2">
+                <p id="confirm_password_error" class="error-message"></p>
+            </div>
+            
+            <div class="mb-4">
+                <label for="dob" class="block text-gray-700 font-medium">Date of Birth:</label>
+                <input type="date" name="dob" id="dob" class="w-full border border-gray-300 rounded p-2" value="{{ form_data.dob|default:'' }}">
+            </div>
+            
+            <div class="mb-4">
+                <label for="phone" class="block text-gray-700 font-medium">Mobile Number:</label>
+                <input type="text" name="phone" id="phone" class="w-full border border-gray-300 rounded p-2" value="{{ form_data.phone|default:'' }}">
+                <p id="phone_error" class="error-message"></p>
+            </div>
+            
+            <div class="mb-6">
+                <label for="profile_picture" class="block text-gray-700 font-medium">Profile Picture:</label>
+                <input type="file" name="profile_picture" id="profile_picture" class="w-full border border-gray-300 rounded p-2">
+            </div>
+            
+            <button type="submit" class="bg-blue-500 text-white w-full p-2 rounded hover:bg-blue-600">Register</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+            // Full Name Validation
+            const fullName = document.getElementById('full_name').value.trim();
+            if (!fullName) {
+                isValid = false;
+                document.getElementById('full_name_error').textContent = 'Full name is required.';
+            }
+
+            // Email Validation
+            const email = document.getElementById('email').value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                isValid = false;
+                document.getElementById('email_error').textContent = 'Enter a valid email address.';
+            }
+
+            // Password Validation
+            const password = document.getElementById('password').value;
+            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+            if (!password || !passwordRegex.test(password)) {
+                isValid = false;
+                document.getElementById('password_error').textContent = 'Password must be at least 8 characters, include a number, a letter, and a special character.';
+            }
+
+            // Confirm Password Validation
+            const confirmPassword = document.getElementById('confirm_password').value;
+            if (password !== confirmPassword) {
+                isValid = false;
+                document.getElementById('confirm_password_error').textContent = 'Passwords do not match.';
+            }
+
+            // Phone Validation
+            const phone = document.getElementById('phone').value.trim();
+            const phoneRegex = /^[0-9]{10}$/;
+            if (!phone || !phoneRegex.test(phone)) {
+                isValid = false;
+                document.getElementById('phone_error').textContent = 'Enter a valid 10-digit mobile number.';
+            }
+
+            // Prevent form submission if validation fails
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

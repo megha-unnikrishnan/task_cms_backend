@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Sidebar and Main Content Container -->
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-blue-800 text-white p-6">
+            <h2 class="text-2xl font-semibold mb-6">Dashboard</h2>
+            <ul>
+                <li><a href="#" class="block py-2 px-4 rounded hover:bg-blue-600">Home</a></li>
+                <li><a href="{% url 'postcreate' %}" class="block py-2 px-4 rounded hover:bg-blue-600">Create Post</a></li>
+                <li><a href="#" class="block py-2 px-4 rounded hover:bg-blue-600">Profile</a></li>
+                <li><a href="{% url 'logout' %}" class="block py-2 px-4 rounded hover:bg-blue-600">Logout</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-8">
+            
+            <!-- Display Messages at the Top -->
+            {% if messages %}
+                <div class="space-y-4 w-full max-w-md mb-6">
+                    {% for message in messages %}
+                        <div class="p-4 rounded-lg 
+                                    {% if message.tags == 'success' %}
+                                        bg-green-100 text-green-800 border border-green-300
+                                    {% elif message.tags == 'error' %}
+                                        bg-red-100 text-red-800 border border-red-300
+                                    {% elif message.tags == 'warning' %}
+                                        bg-yellow-100 text-yellow-800 border border-yellow-300
+                                    {% elif message.tags == 'info' %}
+                                        bg-blue-100 text-blue-800 border border-blue-300
+                                    {% else %}
+                                        bg-gray-100 text-gray-800 border border-gray-300
+                                    {% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800">All Posts</h2>
+                <a href="{% url 'postcreate' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500">Create New Post</a>
+            </div>
+
+            <!-- Posts Section -->
+            <div class="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
+                {% if posts %}
+                    <!-- Grid Layout for Posts -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {% for post in posts %}
+                            <div class="bg-gray-50 border border-gray-300 p-4 rounded-lg shadow hover:shadow-lg transition duration-300">
+                                <!-- Author Information -->
+                                <div class="flex items-center mb-4">
+                                    {% if post.author.profile_picture %}
+                                        <img src="{{ post.author.profile_picture }}" alt="Author Profile Picture" class="w-10 h-10 rounded-full mr-3">
+                                    {% else %}
+                                        <div class="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
+                                    {% endif %}
+                                    <h4 class="text-gray-800 font-medium">{{ post.author.full_name }}</h4>
+                                </div>
+
+                                <!-- Post Image -->
+                                <a href="{% url 'post_detail' post.id %}">
+                                    {% if post.image %}
+                                        <img src="{{ post.image }}" alt="Post Image" class="w-full h-40 object-cover rounded-lg mb-4">
+                                    {% endif %}
+                                </a>
+
+                                <!-- Post Title and Content -->
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ post.title }}</h3>
+                                <p class="text-gray-600 mb-4">
+                                    <span class="truncate-content">{{ post.content|truncatewords:20 }}</span>
+                                    <span class="full-content hidden">{{ post.content }}</span>
+                                </p>
+                                <a href="#" class="block mt-4 text-blue-600 hover:underline font-medium read-more-btn" onclick="toggleContent(event, this)">Read More</a>
+
+                                <!-- Like and Comment Section -->
+                                <div class="flex items-center justify-between mt-4">
+                                    <!-- Like Button -->
+                                    <!-- <button class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 focus:outline-none">
+                                        Like
+                                    </button> -->
+
+                                    <!-- Comment Button -->
+                                    <!-- <button onclick="toggleCommentForm(event, '{{ post.id }}')" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-full hover:bg-gray-400 focus:outline-none">
+                                        Comment
+                                    </button> -->
+                                </div>
+
+                                <!-- Comment Form (Initially Hidden) -->
+                                <div id="comment-form-{{ post.id }}" class="hidden mt-4">
+                                    <form method="POST" action="{% url 'comments' post.id %}">
+                                        {% csrf_token %}
+                                        <textarea class="w-full p-2 border border-gray-300 rounded-lg" name="content" placeholder="Write a comment..." required></textarea>
+                                        <button type="submit" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Submit</button>
+                                    </form>
+                                </div>
+
+                                <!-- Existing Comments -->
+                                <!-- <h2 class="mt-4">Existing Comments:</h2>
+                                <ul>
+                                    {% for comment in post.comments.all %}
+                                        <li class="mt-2">{{ comment.content }} - <strong>{{ comment.author.username }}</strong></li>
+                                    {% empty %}
+                                        <li>No comments yet.</li>
+                                    {% endfor %}
+                                </ul> -->
+                            </div>
+                        {% endfor %}
+                    </div>
+              
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for "Read More" and Comment Form Toggle -->
+    <script>
+        function toggleContent(event, element) {
+            event.preventDefault(); // Prevent default anchor behavior
+            const contentContainer = element.previousElementSibling; // Get the paragraph
+            const truncateContent = contentContainer.querySelector('.truncate-content');
+            const fullContent = contentContainer.querySelector('.full-content');
+
+            if (truncateContent.classList.contains('hidden')) {
+                // If truncated content is hidden, show it and hide full content
+                truncateContent.classList.remove('hidden');
+                fullContent.classList.add('hidden');
+                element.textContent = 'Read More';
+            } else {
+                // Otherwise, show full content and hide truncated content
+                truncateContent.classList.add('hidden');
+                fullContent.classList.remove('hidden');
+                element.textContent = 'Show Less';
+            }
+        }
+
+        function toggleCommentForm(event, postId) {
+            const form = document.getElementById(`comment-form-${postId}`);
+            form.classList.toggle('hidden');
+        }
+    </script>
+
+</body>
+</html>

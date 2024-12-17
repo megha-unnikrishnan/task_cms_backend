@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Posts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+    <div class="flex justify-center items-center min-h-screen">
+        <div class="w-full max-w-3xl p-8 bg-white shadow-lg rounded-lg border border-gray-200">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">All Posts</h2>
+
+            {% if posts %}
+                <div class="space-y-4">
+                    {% for post in posts %}
+                        <div class="p-4 border-b border-gray-300">
+                            <h3 class="text-xl font-semibold text-gray-800">{{ post.title }}</h3>
+                            <p class="text-gray-600">{{ post.content }}</p>
+                            {% if post.image %}
+                                <img src="{{ post.image }}" alt="Post Image" class="mt-4 max-w-full h-auto rounded-lg">
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600">No posts available.</p>
+            {% endif %}
+
+            {% if errors %}
+                <div class="bg-red-100 p-4 rounded-lg mt-4">
+                    {% for error in errors.non_field_errors %}
+                        <p class="text-red-600">{{ error }}</p>
+                    {% endfor %}
+                    {% for field, error_list in errors.items %}
+                        {% if field != 'non_field_errors' %}
+                            <p class="text-red-600">{{ field }}: {{ error_list|join:', ' }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>

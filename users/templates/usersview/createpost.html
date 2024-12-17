@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Post</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+    <div class="flex justify-center items-center min-h-screen">
+        <form method="POST" enctype="multipart/form-data" id="createPostForm" class="w-full max-w-lg p-8 bg-white shadow-lg rounded-lg border border-gray-200">
+            {% csrf_token %}
+            
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Create a New Post</h2>
+            
+            <!-- Title Field -->
+            <div class="mb-6">
+                <label for="title" class="block text-gray-700 font-medium mb-2">Title:</label>
+                <input type="text" name="title" id="title" value="{{ form_data.title|default:'' }}" 
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <span id="titleError" class="text-red-500 text-sm hidden">Title is required.</span>
+            </div>
+        
+            <!-- Content Field -->
+            <div class="mb-6">
+                <label for="content" class="block text-gray-700 font-medium mb-2">Content:</label>
+                <textarea name="content" id="content" rows="4" 
+                          class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <span id="contentError" class="text-red-500 text-sm hidden">Content is required.</span>
+            </div>
+        
+            <!-- Image Upload -->
+            <div class="mb-6">
+                <label for="image" class="block text-gray-700 font-medium mb-2">Image:</label>
+                <input type="file" name="image" id="image" 
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <span id="imageError" class="text-red-500 text-sm hidden">Please upload an image.</span>
+            </div>
+        
+            <!-- Error Messages -->
+            {% if errors %}
+                <div class="bg-red-100 p-4 rounded-lg mb-6">
+                    {% for error in errors.non_field_errors %}
+                        <p class="text-red-600">{{ error }}</p>
+                    {% endfor %}
+                    {% for field, error_list in errors.items %}
+                        {% if field != 'non_field_errors' %}
+                            <p class="text-red-600">{{ field }}: {{ error_list|join:', ' }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        
+            <!-- Submit Button -->
+            <button type="submit" class="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                Create Post
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("createPostForm").addEventListener("submit", function(event) {
+            let isValid = true;
+    
+            // Validate Title
+            const title = document.getElementById("title");
+            const titleError = document.getElementById("titleError");
+            if (title.value.trim() === "") {
+                titleError.classList.remove("hidden");
+                isValid = false;
+            } else {
+                titleError.classList.add("hidden");
+            }
+    
+            // Validate Content
+            const content = document.getElementById("content");
+            const contentError = document.getElementById("contentError");
+            if (content.value.trim() === "") {
+                contentError.classList.remove("hidden");
+                isValid = false;
+            } else {
+                contentError.classList.add("hidden");
+            }
+    
+            // Validate Image
+            const image = document.getElementById("image");
+            const imageError = document.getElementById("imageError");
+            if (image.files.length === 0) {
+                imageError.classList.remove("hidden");
+                isValid = false;
+            } else {
+                imageError.classList.add("hidden");
+            }
+    
+            // Prevent form submission if validation fails
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
