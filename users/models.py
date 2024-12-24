@@ -74,7 +74,7 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Comment by {self.author.username} on {self.post.title}"
+        return f"Comment by {self.author.full_name} on {self.post.title}"
 
 class Like(models.Model):
     post = models.ForeignKey(Post, related_name='likes', on_delete=models.CASCADE)

@@ -17,6 +17,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         # Get the user's details
         user_email = self.user.email
         is_admin = self.user.is_staff
+        full_name = self.user.full_name 
         
         # Log or print the details of the regular user (you can choose either approach)
         if not is_admin:  # For regular users
@@ -26,6 +27,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         # Add custom data to the response
         data['is_admin'] = is_admin
         data['email'] = user_email
+        data['full_name'] = full_name 
         
         return data
 
@@ -90,9 +92,18 @@ class PostSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'author', 'created_at', 'updated_at', 'likes_count', 'read_count']
 
 class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SerializerMethodField()  # Custom field for author details
+
     class Meta:
         model = Comment
-        fields = ['id', 'author', 'content', 'created_at']
+        fields = ['id', 'content', 'author', 'created_at']  # Include author in the response
+
+    def get_author(self, obj):
+        # Return a dictionary with the author's details
+        return {
+            'full_name': obj.author.get_full_name(),
+            'profile_picture': obj.author.profile_picture.url if obj.author.profile_picture else None
+        }
 
 
 class LikeSerializer(serializers.ModelSerializer):
